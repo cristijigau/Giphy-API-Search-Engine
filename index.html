@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Jigau Cristian" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body onload="onLoad()">
+    <div id="myModal" class="modal">
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+    <header>
+      <div class="header-logo" onclick="trendingRequest()">
+        <span>J</span>
+        <span>o</span>
+        <span>o</span>
+        <span>g</span>
+        <span>l</span>
+        <span>e</span>
+      </div>
+      <span class="header-search-bar">
+        <input type="text" placeholder="Search" id="searchInput" /><i
+          class="fas fa-search"
+          onclick="searchAction()"
+        ></i>
+      </span>
+    </header>
+    <main>
+      <div class="main-content" id="mainContent"></div>
+    </main>
+    <footer></footer>
+    <script src="js/index.js"></script>
+  </body>
+</html>
