@@ -12,7 +12,7 @@ let responseContent;
 
 // Received data storage
 
-let receivedData = [];
+let parsed;
 
 const onLoad = function () {
   trendingRequest();
@@ -25,7 +25,7 @@ const onLoad = function () {
   };
 };
 
-let trendingRequest = function () {
+const trendingRequest = function () {
   // API URL Request data
   const baseURL = 'https://api.giphy.com';
   const apiEndpoint = '/v1/gifs/trending';
@@ -35,7 +35,7 @@ let trendingRequest = function () {
   makeRequest(fullURL);
 };
 
-let searchRequest = function (search) {
+const searchRequest = function (search) {
   // API URL Request data
   const baseURL = 'https://api.giphy.com';
   const apiEndpoint = '/v1/gifs/search';
@@ -46,7 +46,7 @@ let searchRequest = function (search) {
   makeRequest(fullURL);
 };
 
-let makeRequest = function (fullURL) {
+const makeRequest = function (fullURL) {
   httpRequest = new XMLHttpRequest();
   if (!httpRequest) {
     alert("Can't create the request");
@@ -56,9 +56,8 @@ let makeRequest = function (fullURL) {
   httpRequest.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       responseContent = httpRequest.responseText;
-      let parsed = JSON.parse(responseContent);
+      parsed = JSON.parse(responseContent);
       displayContent(parsed);
-      receivedData = parsed;
       console.log(parsed);
     }
   };
@@ -66,7 +65,7 @@ let makeRequest = function (fullURL) {
   httpRequest.open('GET', fullURL);
   httpRequest.send();
 
-  let displayContent = function (parsed) {
+  const displayContent = function (parsed) {
     let id = 0;
     htmlContainerElement.innerHTML = '';
     for (let key in parsed.data) {
@@ -82,14 +81,14 @@ let makeRequest = function (fullURL) {
   };
 };
 
-let openModal = function () {
-  let image = document.createElement('img');
-  image.src = receivedData.data[event.target.id].images.original.url;
+const openModal = function () {
+  const image = document.createElement('img');
+  image.src = parsed.data[event.target.id].images.original.url;
   modalContent.appendChild(image);
   modal.style.display = 'block';
 };
 
-var input = document.getElementById('searchInput');
+const input = document.getElementById('searchInput');
 input.addEventListener('keyup', function (event) {
   if (event.keyCode === 13) {
     const search = event.target.value;
@@ -97,7 +96,7 @@ input.addEventListener('keyup', function (event) {
   }
 });
 
-let searchAction = function () {
+const searchAction = function () {
   const search = event.target.previousSibling.value;
   searchRequest(search);
 };
