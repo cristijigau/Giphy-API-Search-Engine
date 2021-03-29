@@ -4,6 +4,7 @@ const htmlContainerElement = document.getElementById('mainContent');
 // Modal elements
 const modal = document.getElementById('myModal');
 const modalContent = document.getElementById('modalContent');
+const input = document.getElementById('searchInput');
 
 // Request/Response
 
@@ -14,11 +15,20 @@ let responseContent;
 
 let parsed;
 
+input.addEventListener('keyup', ({ keyCode }) => {
+  //used destructuring for event.keyCode => event object is destructured and {keyCode} takes it's value.
+  if (keyCode === 13) {
+    const search = event.target.value;
+    searchRequest(search);
+  }
+});
+
 const onLoad = () => {
   trendingRequest();
 
-  window.onclick = event => {
-    if (event.target == modalContent) {
+  window.onclick = ({ target }) => {
+    //used destructuring for event.target => event object is destructured and {target} takes it's value.
+    if (target == modalContent) {
       modalContent.innerHTML = '';
       modal.style.display = 'none';
     }
@@ -58,45 +68,48 @@ const makeRequest = fullURL => {
       responseContent = httpRequest.responseText;
       parsed = JSON.parse(responseContent);
       displayContent(parsed);
-      console.log(parsed);
     }
   };
 
   httpRequest.open('GET', fullURL);
   httpRequest.send();
 
-  const displayContent = parsed => {
+  const displayContent = ({ data }) => {
+    //used destructuring for parsed.data => parsed object is destructured and {data} takes it's value.
     let id = 0;
     htmlContainerElement.innerHTML = '';
-    for (let key in parsed.data) {
+    for (let key in data) {
       const img = document.createElement('img');
-      const imgSrc = parsed.data[key].images.fixed_width.url;
-      img.style.margin = '0.5rem 0.5rem';
-      img.src = imgSrc;
-      img.id = id;
-      img.setAttribute('onclick', 'openModal()');
+      //used destructuring
+      const [
+        margin,
+        {
+          images: {
+            fixed_width: { url },
+          },
+        },
+      ] = ['0.5rem 0.5rem', data[key]];
+      [img.style, img.src, img.id] = [margin, url, id];
+      img.setAttribute('onclick', 'openModal(event)');
       htmlContainerElement.appendChild(img);
       id++;
     }
   };
 };
 
-const openModal = () => {
+const openModal = ({ target: { id } }) => {
   const image = document.createElement('img');
-  image.src = parsed.data[event.target.id].images.original.url;
+  image.src = parsed.data[id].images.original.url;
   modalContent.appendChild(image);
   modal.style.display = 'block';
 };
 
-const input = document.getElementById('searchInput');
-input.addEventListener('keyup', event => {
-  if (event.keyCode === 13) {
-    const search = event.target.value;
-    searchRequest(search);
-  }
-});
-
-const searchAction = () => {
-  const search = event.target.previousSibling.value;
+const searchAction = ({
+  target: {
+    previousSibling: { value },
+  },
+}) => {
+  //used destructuring
+  const search = value;
   searchRequest(search);
 };
