@@ -14,7 +14,7 @@ let responseContent;
 
 let parsed;
 
-const onLoad = function () {
+const onLoad = () => {
   trendingRequest();
 
   window.onclick = function (event) {
