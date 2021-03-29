@@ -14,10 +14,10 @@ let responseContent;
 
 let parsed;
 
-const onLoad = function () {
+const onLoad = () => {
   trendingRequest();
 
-  window.onclick = function (event) {
+  window.onclick = event => {
     if (event.target == modalContent) {
       modalContent.innerHTML = '';
       modal.style.display = 'none';
@@ -25,7 +25,7 @@ const onLoad = function () {
   };
 };
 
-const trendingRequest = function () {
+const trendingRequest = () => {
   // API URL Request data
   const baseURL = 'https://api.giphy.com';
   const apiEndpoint = '/v1/gifs/trending';
@@ -35,7 +35,7 @@ const trendingRequest = function () {
   makeRequest(fullURL);
 };
 
-const searchRequest = function (search) {
+const searchRequest = search => {
   // API URL Request data
   const baseURL = 'https://api.giphy.com';
   const apiEndpoint = '/v1/gifs/search';
@@ -46,7 +46,7 @@ const searchRequest = function (search) {
   makeRequest(fullURL);
 };
 
-const makeRequest = function (fullURL) {
+const makeRequest = fullURL => {
   httpRequest = new XMLHttpRequest();
   if (!httpRequest) {
     alert("Can't create the request");
@@ -65,7 +65,7 @@ const makeRequest = function (fullURL) {
   httpRequest.open('GET', fullURL);
   httpRequest.send();
 
-  const displayContent = function (parsed) {
+  const displayContent = parsed => {
     let id = 0;
     htmlContainerElement.innerHTML = '';
     for (let key in parsed.data) {
@@ -81,7 +81,7 @@ const makeRequest = function (fullURL) {
   };
 };
 
-const openModal = function () {
+const openModal = () => {
   const image = document.createElement('img');
   image.src = parsed.data[event.target.id].images.original.url;
   modalContent.appendChild(image);
@@ -89,14 +89,14 @@ const openModal = function () {
 };
 
 const input = document.getElementById('searchInput');
-input.addEventListener('keyup', function (event) {
+input.addEventListener('keyup', event => {
   if (event.keyCode === 13) {
     const search = event.target.value;
     searchRequest(search);
   }
 });
 
-const searchAction = function () {
+const searchAction = () => {
   const search = event.target.previousSibling.value;
   searchRequest(search);
 };
