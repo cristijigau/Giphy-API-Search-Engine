@@ -15,9 +15,9 @@ let responseContent;
 
 let parsed;
 
-input.addEventListener('keyup', ({ keyCode }) => {
+input.addEventListener('keyup', event => {
   //used destructuring for event.keyCode => event object is destructured and {keyCode} takes it's value.
-  if (keyCode === 13) {
+  if (event.keyCode === 13) {
     const search = event.target.value;
     searchRequest(search);
   }
@@ -46,6 +46,9 @@ const trendingRequest = () => {
 };
 
 const searchRequest = search => {
+  //clearing search input field
+  input.value = '';
+
   // API URL Request data
   const baseURL = 'https://api.giphy.com';
   const apiEndpoint = '/v1/gifs/search';
@@ -80,16 +83,8 @@ const makeRequest = fullURL => {
     htmlContainerElement.innerHTML = '';
     for (let key in data) {
       const img = document.createElement('img');
-      //used destructuring
-      const [
-        margin,
-        {
-          images: {
-            fixed_width: { url },
-          },
-        },
-      ] = ['0.5rem 0.5rem', data[key]];
-      [img.style, img.src, img.id] = [margin, url, id];
+      img.src = data[key].images.original.url;
+      img.id = id;
       img.setAttribute('onclick', 'openModal(event)');
       htmlContainerElement.appendChild(img);
       id++;
