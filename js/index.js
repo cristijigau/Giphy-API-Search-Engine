@@ -60,36 +60,33 @@ const searchRequest = search => {
 };
 
 const makeRequest = fullURL => {
-  httpRequest = new XMLHttpRequest();
-  if (!httpRequest) {
-    alert("Can't create the request");
-    return false;
-  }
+  httpRequest = new Request(fullURL, { method: 'GET' });
 
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      responseContent = httpRequest.responseText;
-      parsed = JSON.parse(responseContent);
+  fetch(httpRequest)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      parsed = data;
       displayContent(parsed);
-    }
-  };
+    })
+    .catch(function (err) {
+     alert('Something went wrong during request!', err);
+    });
+};
 
-  httpRequest.open('GET', fullURL);
-  httpRequest.send();
-
-  const displayContent = ({ data }) => {
-    //used destructuring for parsed.data => parsed object is destructured and {data} takes it's value.
-    let id = 0;
-    htmlContainerElement.innerHTML = '';
-    for (let key in data) {
-      const img = document.createElement('img');
-      img.src = data[key].images.original.url;
-      img.id = id;
-      img.setAttribute('onclick', 'openModal(event)');
-      htmlContainerElement.appendChild(img);
-      id++;
-    }
-  };
+const displayContent = ({ data }) => {
+  //used destructuring for parsed.data => parsed object is destructured and {data} takes it's value.
+  let id = 0;
+  htmlContainerElement.innerHTML = '';
+  for (let key in data) {
+    const img = document.createElement('img');
+    img.src = data[key].images.original.url;
+    img.id = id;
+    img.setAttribute('onclick', 'openModal(event)');
+    htmlContainerElement.appendChild(img);
+    id++;
+  }
 };
 
 const openModal = ({ target: { id } }) => {
