@@ -68,7 +68,6 @@ const makeRequest = fullURL => {
     })
     .then(function (data) {
       parsed = data;
-      console.log(parsed);
       displayContent(parsed);
     })
     .catch(function (err) {
