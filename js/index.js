@@ -40,7 +40,7 @@ const trendingRequest = () => {
   const baseURL = 'https://api.giphy.com';
   const apiEndpoint = '/v1/gifs/trending';
   const apiKey = '?api_key=hHGFaUaGZMVAaFuK6GaC5yUk3ceeykET';
-  const limit = '&limit=25';
+  const limit = '&limit=50';
   const fullURL = baseURL + apiEndpoint + apiKey + limit;
   makeRequest(fullURL);
 };
@@ -63,14 +63,14 @@ const makeRequest = fullURL => {
   httpRequest = new Request(fullURL, { method: 'GET' });
 
   fetch(httpRequest)
-    .then(function (response) {
+    .then( response => {
       return response.json();
     })
-    .then(function (data) {
+    .then( data => {
       parsed = data;
       displayContent(parsed);
     })
-    .catch(function (err) {
+    .catch( err => {
       alert('Something went wrong during request!', err);
     });
 };
