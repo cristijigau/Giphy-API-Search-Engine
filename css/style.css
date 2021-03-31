@@ -15,9 +15,6 @@ header {
 .header-logo {
   letter-spacing: -0.2rem;
   cursor: pointer;
-}
-
-.header-logo {
   padding: 1rem;
   font-size: 1.7rem;
   font-weight: 700;
@@ -76,8 +73,16 @@ input:focus {
 }
 
 .main-content {
-  display: flex;
-  flex-wrap: wrap;
+  line-height: 0;
+  column-count: 5;
+  column-gap: 6px;
+  padding: 0 6px;
+}
+
+.main-content img {
+  width: 100%;
+  height: auto;
+  margin-top: 6px;
 }
 
 .modal {
@@ -99,4 +104,25 @@ input:focus {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media (max-width: 1200px) {
+  .main-content {
+    column-count: 4;
+  }
+}
+@media (max-width: 1000px) {
+  .main-content {
+    column-count: 3;
+  }
+}
+@media (max-width: 800px) {
+  .main-content {
+    column-count: 2;
+  }
+}
+@media (max-width: 400px) {
+  .main-content {
+    column-count: 1;
+  }
 }
