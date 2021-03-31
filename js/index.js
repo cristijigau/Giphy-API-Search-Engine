@@ -40,7 +40,7 @@ const trendingRequest = () => {
   const baseURL = 'https://api.giphy.com';
   const apiEndpoint = '/v1/gifs/trending';
   const apiKey = '?api_key=hHGFaUaGZMVAaFuK6GaC5yUk3ceeykET';
-  const limit = '&limit=50';
+  const limit = '&limit=25';
   const fullURL = baseURL + apiEndpoint + apiKey + limit;
   makeRequest(fullURL);
 };
@@ -68,10 +68,11 @@ const makeRequest = fullURL => {
     })
     .then(function (data) {
       parsed = data;
+      console.log(parsed);
       displayContent(parsed);
     })
     .catch(function (err) {
-     alert('Something went wrong during request!', err);
+      alert('Something went wrong during request!', err);
     });
 };
 
@@ -81,7 +82,7 @@ const displayContent = ({ data }) => {
   htmlContainerElement.innerHTML = '';
   for (let key in data) {
     const img = document.createElement('img');
-    img.src = data[key].images.original.url;
+    img.src = data[key]?.images?.original?.url ?? 'images/tenor.gif';
     img.id = id;
     img.setAttribute('onclick', 'openModal(event)');
     htmlContainerElement.appendChild(img);
@@ -91,7 +92,7 @@ const displayContent = ({ data }) => {
 
 const openModal = ({ target: { id } }) => {
   const image = document.createElement('img');
-  image.src = parsed.data[id].images.original.url;
+  image.src = parsed?.data[id]?.images?.original?.url ?? 'images/tenor.gif';
   modalContent.appendChild(image);
   modal.style.display = 'block';
 };
