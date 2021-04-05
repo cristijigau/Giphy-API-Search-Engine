@@ -1,51 +1,38 @@
-// Get the html container element
-const htmlContainerElement = document.getElementById('mainContent');
-
-// Modal elements
+// Getting DOM elements
 const modal = document.getElementById('myModal');
 const modalContent = document.getElementById('modalContent');
 const input = document.getElementById('searchInput');
+const htmlContainerElement = document.getElementById('mainContent');
 
-// Request/Response
-
-let httpRequest;
-let responseContent;
-
-// Received data storage
+// Global scope variables
 
 let parsed;
+let offset = 0;
+const limit = 35; //number of gifs to be displayed at once
+const step = limit;
+let pageContent = '';
+let search = '';
 
-input.addEventListener('keyup', event => {
-  //used destructuring for event.keyCode => event object is destructured and {keyCode} takes it's value.
-  if (event.keyCode === 13) {
-    const search = event.target.value;
-    searchRequest(search);
-  }
-});
+//Functions
 
 const onLoad = () => {
   trendingRequest();
-
-  window.onclick = ({ target }) => {
-    //used destructuring for event.target => event object is destructured and {target} takes it's value.
-    if (target == modalContent) {
-      modalContent.innerHTML = '';
-      modal.style.display = 'none';
-    }
-  };
 };
 
-const trendingRequest = () => {
+const trendingRequest = extend => {
   // API URL Request data
   const baseURL = 'https://api.giphy.com';
   const apiEndpoint = '/v1/gifs/trending';
   const apiKey = '?api_key=hHGFaUaGZMVAaFuK6GaC5yUk3ceeykET';
-  const limit = '&limit=50';
-  const fullURL = baseURL + apiEndpoint + apiKey + limit;
-  makeRequest(fullURL);
+  const apiLimit = '&limit=' + limit;
+  let fullURL = baseURL + apiEndpoint + apiKey + apiLimit;
+
+  pageContent = 'trending';
+
+  checkRequest(extend, fullURL);
 };
 
-const searchRequest = search => {
+const searchRequest = extend => {
   //clearing search input field
   input.value = '';
 
@@ -54,23 +41,39 @@ const searchRequest = search => {
   const apiEndpoint = '/v1/gifs/search';
   const apiKey = '?api_key=hHGFaUaGZMVAaFuK6GaC5yUk3ceeykET';
   const apiSearch = '&q=' + search;
-  const apiLimit = '&limit=50';
-  const fullURL = baseURL + apiEndpoint + apiKey + apiSearch + apiLimit;
-  makeRequest(fullURL);
+  const apiLimit = '&limit=' + limit;
+  let fullURL = baseURL + apiEndpoint + apiKey + apiSearch + apiLimit;
+
+  pageContent = 'search';
+
+  checkRequest(extend, fullURL);
 };
 
-const makeRequest = fullURL => {
-  httpRequest = new Request(fullURL, { method: 'GET' });
+const checkRequest = (extend, fullURL) => {
+  if (extend) {
+    offset += step;
+    fullURL += '&offset=' + offset;
+
+    makeRequest(fullURL, extend);
+  } else {
+    offset = 0;
+    makeRequest(fullURL);
+  }
+};
+
+const makeRequest = (fullURL, extend) => {
+  const httpRequest = new Request(fullURL, { method: 'GET' });
 
   fetch(httpRequest)
-    .then( response => {
+    .then(response => {
       return response.json();
     })
-    .then( data => {
+    .then(data => {
       parsed = data;
-      displayContent(parsed);
+      if (extend) addContent(parsed);
+      else displayContent(parsed);
     })
-    .catch( err => {
+    .catch(err => {
       alert('Something went wrong during request!', err);
     });
 };
@@ -79,6 +82,15 @@ const displayContent = ({ data }) => {
   //used destructuring for parsed.data => parsed object is destructured and {data} takes it's value.
   let id = 0;
   htmlContainerElement.innerHTML = '';
+  appendLoop(data, id);
+};
+
+const addContent = ({ data }) => {
+  let id = offset;
+  appendLoop(data, id);
+};
+
+const appendLoop = (data, id) => {
   for (let key in data) {
     const img = document.createElement('img');
     img.src = data[key]?.images?.original?.url ?? 'images/tenor.gif';
@@ -89,9 +101,9 @@ const displayContent = ({ data }) => {
   }
 };
 
-const openModal = ({ target: { id } }) => {
+const openModal = ({ target: { id, src } }) => {
   const image = document.createElement('img');
-  image.src = parsed?.data[id]?.images?.original?.url ?? 'images/tenor.gif';
+  image.src = src ?? 'images/tenor.gif';
   modalContent.appendChild(image);
   modal.style.display = 'block';
 };
@@ -102,6 +114,38 @@ const searchAction = ({
   },
 }) => {
   //used destructuring
-  const search = value;
-  searchRequest(search);
+  search = value;
+  searchRequest();
 };
+
+const moreContent = () => {
+  if (pageContent === 'trending') trendingRequest(true);
+  else if (pageContent === 'search') searchRequest(search, true);
+};
+
+//Event listeners
+
+input.addEventListener('keyup', event => {
+  //used destructuring for event.keyCode => event object is destructured and {keyCode} takes it's value.
+  if (event.keyCode === 13) {
+    search = event.target.value;
+    searchRequest();
+  }
+});
+
+window.onclick = ({ target }) => {
+  //used destructuring for event.target => event object is destructured and {target} takes it's value.
+  if (target == modalContent) {
+    modalContent.innerHTML = '';
+    modal.style.display = 'none';
+  }
+};
+
+window.addEventListener('scroll', () => {
+  if (
+    window.scrollY + window.innerHeight + 1 >=
+    document.documentElement.scrollHeight
+  ) {
+    moreContent();
+  }
+});
