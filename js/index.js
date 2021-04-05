@@ -53,7 +53,6 @@ const checkRequest = (extend, fullURL) => {
   if (extend) {
     offset += step;
     fullURL += '&offset=' + offset;
-
     makeRequest(fullURL, extend);
   } else {
     offset = 0;
