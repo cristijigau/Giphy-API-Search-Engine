@@ -9,9 +9,12 @@ const htmlContainerElement = document.getElementById('mainContent');
 let parsed;
 let offset = 0;
 const limit = 35; //number of gifs to be displayed at once
-const step = limit;
 let pageContent = '';
 let search = '';
+
+const GIFS_ENDPOINT = 'https://api.giphy.com/v1/gifs/';
+const API_KEY = '?api_key=hHGFaUaGZMVAaFuK6GaC5yUk3ceeykET';
+const API_LIMIT = '&limit=' + limit;
 
 //Functions
 
@@ -21,15 +24,9 @@ const onLoad = () => {
 
 const trendingRequest = extend => {
   // API URL Request data
-  const baseURL = 'https://api.giphy.com';
-  const apiEndpoint = '/v1/gifs/trending';
-  const apiKey = '?api_key=hHGFaUaGZMVAaFuK6GaC5yUk3ceeykET';
-  const apiLimit = '&limit=' + limit;
-  let fullURL = baseURL + apiEndpoint + apiKey + apiLimit;
-
   pageContent = 'trending';
-
-  checkRequest(extend, fullURL);
+  let URL = GIFS_ENDPOINT + pageContent + API_KEY + API_LIMIT;
+  checkRequest(extend, URL);
 };
 
 const searchRequest = extend => {
@@ -37,26 +34,21 @@ const searchRequest = extend => {
   input.value = '';
 
   // API URL Request data
-  const baseURL = 'https://api.giphy.com';
-  const apiEndpoint = '/v1/gifs/search';
-  const apiKey = '?api_key=hHGFaUaGZMVAaFuK6GaC5yUk3ceeykET';
-  const apiSearch = '&q=' + search;
-  const apiLimit = '&limit=' + limit;
-  let fullURL = baseURL + apiEndpoint + apiKey + apiSearch + apiLimit;
-
   pageContent = 'search';
-
-  checkRequest(extend, fullURL);
+  const apiSearch = '&q=' + search;
+  let URL = GIFS_ENDPOINT + pageContent + API_KEY + apiSearch + API_LIMIT;
+  checkRequest(extend, URL);
 };
 
-const checkRequest = (extend, fullURL) => {
+const checkRequest = (extend, URL) => {
   if (extend) {
-    offset += step;
-    fullURL += '&offset=' + offset;
-    makeRequest(fullURL, extend);
+    offset += limit;
+    URL += '&offset=' + offset;
+    makeRequest(URL, extend);
   } else {
     offset = 0;
-    makeRequest(fullURL);
+    URL += '&offset=' + offset;
+    makeRequest(URL);
   }
 };
 
@@ -79,28 +71,24 @@ const makeRequest = (fullURL, extend) => {
 
 const displayContent = ({ data }) => {
   //used destructuring for parsed.data => parsed object is destructured and {data} takes it's value.
-  let id = 0;
   htmlContainerElement.innerHTML = '';
-  appendLoop(data, id);
+  appendLoop(data);
 };
 
 const addContent = ({ data }) => {
-  let id = offset;
-  appendLoop(data, id);
+  appendLoop(data);
 };
 
-const appendLoop = (data, id) => {
+const appendLoop = (data) => {
   for (let key in data) {
     const img = document.createElement('img');
     img.src = data[key]?.images?.original?.url ?? 'images/tenor.gif';
-    img.id = id;
     img.setAttribute('onclick', 'openModal(event)');
     htmlContainerElement.appendChild(img);
-    id++;
   }
 };
 
-const openModal = ({ target: { id, src } }) => {
+const openModal = ({ target: { src } }) => {
   const image = document.createElement('img');
   image.src = src ?? 'images/tenor.gif';
   modalContent.appendChild(image);
